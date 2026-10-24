@@ -1,32 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Color Hunter Travel Challenge</title>
+    <title>Color Hunter 旅遊色彩獵人</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome 圖示庫 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter & Noto Sans TC -->
+    <!-- Google 字型 (Noto Sans TC & Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            900: '#0c4a6e',
-                        }
+                        sans: ['Noto Sans TC', 'Inter', 'sans-serif'],
                     }
                 }
             }
@@ -34,7 +26,7 @@
     </script>
     <style>
         body {
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
@@ -45,14 +37,11 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        .glow-effect {
-            box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.3);
-        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-between selection:bg-rose-500 selection:text-white">
 
-    <!-- Top Navigation Header -->
+    <!-- 頁首導覽列 -->
     <header class="w-full max-w-md px-5 py-4 flex justify-between items-center z-10 border-b border-slate-800/80 bg-slate-900/80 backdrop-blur-md sticky top-0">
         <div class="flex items-center space-x-2.5">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 via-purple-500 to-amber-400 flex items-center justify-center shadow-lg shadow-rose-500/20">
@@ -60,121 +49,131 @@
             </div>
             <div>
                 <h1 class="text-base font-black tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">Color Hunter</h1>
-                <p class="text-[10px] text-slate-400 font-medium tracking-wider -mt-0.5">TRAVEL CHALLENGE</p>
+                <p class="text-[10px] text-slate-400 font-medium tracking-wider -mt-0.5">旅遊色彩獵人</p>
             </div>
         </div>
         <button id="resetAppBtn" class="text-xs text-slate-400 hover:text-rose-400 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700/60 transition active:scale-95 flex items-center gap-1.5">
-            <i class="fa-solid fa-rotate-right text-[10px]"></i> Reset
+            <i class="fa-solid fa-rotate-right text-[10px]"></i> 重置遊戲
         </button>
     </header>
 
-    <!-- Main Mobile Container -->
-    <main class="w-full max-w-md px-4 py-4 flex-1 flex flex-col gap-5 overflow-y-auto hide-scrollbar">
+    <!-- 主內容區塊 -->
+    <main class="w-full max-w-md px-4 py-4 flex-1 flex flex-col gap-4 overflow-y-auto hide-scrollbar">
 
-        <!-- 1. Target Color Drawer -->
+        <!-- 遊戲簡短說明卡片 -->
+        <div class="bg-slate-900/40 rounded-xl p-3 border border-slate-800/60 text-slate-400 text-xs flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0 text-amber-400">
+                <i class="fa-solid fa-compass text-base"></i>
+            </div>
+            <p class="text-[11px] leading-relaxed">
+                <strong class="text-slate-200">玩法：</strong>抽出今天的指定主題顏色，在旅途中找尋並拍下 4 張含有該顏色的風景或小物，合成為專屬旅行明信片！
+            </p>
+        </div>
+
+        <!-- 1. 色彩抽籤卡片 -->
         <section class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800/80 shadow-xl relative overflow-hidden backdrop-blur">
             <div class="flex justify-between items-center mb-3">
                 <span class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-rose-500 inline-block animate-pulse"></span>
-                    1. TARGET COLOR
+                    第一步：抽取目標顏色
                 </span>
-                <span id="themeBadge" class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700/50">
-                    NOT DRAWN
+                <span id="themeBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700/50">
+                    未抽籤
                 </span>
             </div>
 
-            <!-- Active Theme Visual Box -->
-            <div id="themeDisplay" class="relative rounded-xl p-4 transition-all duration-300 flex flex-col justify-between overflow-hidden min-h-[115px] border border-slate-800 bg-slate-950/60">
+            <!-- 當前抽中色彩展示區 -->
+            <div id="themeDisplay" class="relative rounded-xl p-4 transition-all duration-300 flex flex-col justify-between overflow-hidden min-h-[110px] border border-slate-800 bg-slate-950/60">
                 <div class="z-10 flex justify-between items-start">
                     <div>
-                        <h2 id="themeName" class="text-xl font-extrabold tracking-wide text-white">Tap Draw to Start</h2>
+                        <h2 id="themeName" class="text-xl font-extrabold tracking-wide text-white">點擊按鈕開始抽籤</h2>
                         <p id="themeHex" class="text-xs font-mono mt-1 text-slate-400 tracking-wider">#??????</p>
                     </div>
                     <div id="colorCircle" class="w-11 h-11 rounded-xl border-2 border-white/20 shadow-lg transition-all duration-300 bg-slate-800 flex items-center justify-center">
                         <i class="fa-solid fa-dice text-white/60 text-lg"></i>
                     </div>
                 </div>
-                <p id="themeDesc" class="z-10 text-xs mt-3 text-slate-400 font-light line-clamp-1">Explore your surroundings and capture 4 objects in this theme color!</p>
-                <!-- Background Accent Glow -->
+                <p id="themeDesc" class="z-10 text-xs mt-3 text-slate-400 font-light line-clamp-1">觀察街頭角落，拍下 4 張帶有該顏色的精采畫面！</p>
+                <!-- 背景動態光暈 -->
                 <div id="themeBgGlow" class="absolute inset-0 opacity-15 transition-all duration-500 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
             </div>
 
             <button id="drawColorBtn" class="w-full mt-3 py-3 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 hover:from-rose-600 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
-                <i class="fa-solid fa-shuffle text-sm"></i> Randomize Color Theme
+                <i class="fa-solid fa-shuffle text-sm"></i> 隨機抽取色彩主題
             </button>
         </section>
 
-        <!-- 2. Photo Capture & Grid Queue -->
+        <!-- 2. 照片捕捉與 2x2 格線預覽 -->
         <section class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800/80 shadow-xl backdrop-blur">
             <div class="flex justify-between items-center mb-3">
                 <span class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-                    2. CAPTURE 4 MATCHING PHOTOS
+                    第二步：收集 4 張目標照片
                 </span>
                 <span id="photoCountBadge" class="text-xs font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-slate-800 text-emerald-400 border border-slate-700/60">
                     0 / 4
                 </span>
             </div>
 
-            <!-- Action Controls -->
+            <!-- 操作按鈕按鍵 -->
             <div class="grid grid-cols-2 gap-2.5 mb-4">
                 <button id="openCamBtn" class="py-3 px-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl border border-slate-700/80 active:scale-[0.98] transition flex items-center justify-center gap-2 text-xs shadow">
-                    <i class="fa-solid fa-camera text-emerald-400 text-sm"></i> Open Camera
+                    <i class="fa-solid fa-camera text-emerald-400 text-sm"></i> 開啟相機拍攝
                 </button>
                 <label for="fileInput" class="py-3 px-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl border border-slate-700/80 active:scale-[0.98] transition flex items-center justify-center gap-2 text-xs shadow cursor-pointer">
-                    <i class="fa-solid fa-image text-cyan-400 text-sm"></i> Upload Photo
+                    <i class="fa-solid fa-image text-cyan-400 text-sm"></i> 從相簿上傳
                     <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
                 </label>
             </div>
 
-            <!-- 2x2 Photo Grid View -->
+            <!-- 2x2 九宮格/相片預覽區 -->
             <div class="grid grid-cols-2 gap-3 aspect-square w-full">
-                <!-- Slot 0 -->
+                <!-- 格子 1 -->
                 <div class="photo-slot relative rounded-xl border-2 border-dashed border-slate-800 bg-slate-950/60 flex flex-col items-center justify-center overflow-hidden transition hover:border-slate-600" data-index="0">
                     <div class="slot-empty flex flex-col items-center gap-1.5 text-slate-600">
                         <i class="fa-solid fa-plus text-2xl"></i>
-                        <span class="text-[11px] font-medium">Photo 1</span>
+                        <span class="text-[11px] font-medium">第一張照片</span>
                     </div>
-                    <img class="slot-img w-full h-full object-cover hidden" alt="Photo 1">
+                    <img class="slot-img w-full h-full object-cover hidden" alt="照片 1">
                     <button class="delete-btn absolute top-2 right-2 w-7 h-7 bg-black/75 hover:bg-rose-600 text-white rounded-full hidden items-center justify-center transition shadow-md">
                         <i class="fa-solid fa-xmark text-xs"></i>
                     </button>
                     <span class="slot-badge absolute bottom-2 left-2 bg-black/70 text-white text-[9px] px-1.5 py-0.5 rounded font-mono hidden">#1</span>
                 </div>
 
-                <!-- Slot 1 -->
+                <!-- 格子 2 -->
                 <div class="photo-slot relative rounded-xl border-2 border-dashed border-slate-800 bg-slate-950/60 flex flex-col items-center justify-center overflow-hidden transition hover:border-slate-600" data-index="1">
                     <div class="slot-empty flex flex-col items-center gap-1.5 text-slate-600">
                         <i class="fa-solid fa-plus text-2xl"></i>
-                        <span class="text-[11px] font-medium">Photo 2</span>
+                        <span class="text-[11px] font-medium">第二張照片</span>
                     </div>
-                    <img class="slot-img w-full h-full object-cover hidden" alt="Photo 2">
+                    <img class="slot-img w-full h-full object-cover hidden" alt="照片 2">
                     <button class="delete-btn absolute top-2 right-2 w-7 h-7 bg-black/75 hover:bg-rose-600 text-white rounded-full hidden items-center justify-center transition shadow-md">
                         <i class="fa-solid fa-xmark text-xs"></i>
                     </button>
                     <span class="slot-badge absolute bottom-2 left-2 bg-black/70 text-white text-[9px] px-1.5 py-0.5 rounded font-mono hidden">#2</span>
                 </div>
 
-                <!-- Slot 2 -->
+                <!-- 格子 3 -->
                 <div class="photo-slot relative rounded-xl border-2 border-dashed border-slate-800 bg-slate-950/60 flex flex-col items-center justify-center overflow-hidden transition hover:border-slate-600" data-index="2">
                     <div class="slot-empty flex flex-col items-center gap-1.5 text-slate-600">
                         <i class="fa-solid fa-plus text-2xl"></i>
-                        <span class="text-[11px] font-medium">Photo 3</span>
+                        <span class="text-[11px] font-medium">第三張照片</span>
                     </div>
-                    <img class="slot-img w-full h-full object-cover hidden" alt="Photo 3">
+                    <img class="slot-img w-full h-full object-cover hidden" alt="照片 3">
                     <button class="delete-btn absolute top-2 right-2 w-7 h-7 bg-black/75 hover:bg-rose-600 text-white rounded-full hidden items-center justify-center transition shadow-md">
                         <i class="fa-solid fa-xmark text-xs"></i>
                     </button>
                     <span class="slot-badge absolute bottom-2 left-2 bg-black/70 text-white text-[9px] px-1.5 py-0.5 rounded font-mono hidden">#3</span>
                 </div>
 
-                <!-- Slot 3 -->
+                <!-- 格子 4 -->
                 <div class="photo-slot relative rounded-xl border-2 border-dashed border-slate-800 bg-slate-950/60 flex flex-col items-center justify-center overflow-hidden transition hover:border-slate-600" data-index="3">
                     <div class="slot-empty flex flex-col items-center gap-1.5 text-slate-600">
                         <i class="fa-solid fa-plus text-2xl"></i>
-                        <span class="text-[11px] font-medium">Photo 4</span>
+                        <span class="text-[11px] font-medium">第四張照片</span>
                     </div>
-                    <img class="slot-img w-full h-full object-cover hidden" alt="Photo 4">
+                    <img class="slot-img w-full h-full object-cover hidden" alt="照片 4">
                     <button class="delete-btn absolute top-2 right-2 w-7 h-7 bg-black/75 hover:bg-rose-600 text-white rounded-full hidden items-center justify-center transition shadow-md">
                         <i class="fa-solid fa-xmark text-xs"></i>
                     </button>
@@ -183,49 +182,49 @@
             </div>
         </section>
 
-        <!-- 3. Customize & Generate Postcard -->
+        <!-- 3. 足跡設定與合成按鈕 -->
         <section class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800/80 shadow-xl backdrop-blur flex flex-col gap-3">
             <span class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
-                3. CARD CUSTOMIZATION
+                第三步：個性化標記與合成
             </span>
 
             <div>
-                <label for="locationInput" class="block text-xs text-slate-300 font-medium mb-1.5">Travel Location / Caption</label>
+                <label for="locationInput" class="block text-xs text-slate-300 font-medium mb-1.5">旅行地點與短語腳註</label>
                 <div class="relative">
                     <i class="fa-solid fa-location-dot absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                    <input type="text" id="locationInput" placeholder="e.g. Kyoto, Japan" value="Kyoto, Japan" maxlength="30" class="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-rose-500 transition">
+                    <input type="text" id="locationInput" placeholder="例如：京都・清水寺 或 台北街頭探索" value="京都・清水寺" maxlength="30" class="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-rose-500 transition">
                 </div>
             </div>
 
             <button id="generateBtn" disabled class="w-full py-3.5 bg-slate-800 text-slate-500 font-bold rounded-xl shadow-lg cursor-not-allowed transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider mt-1">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Collect 4 Photos To Generate
+                <i class="fa-solid fa-wand-magic-sparkles"></i> 集滿 4 張照片後即可合成
             </button>
         </section>
 
     </main>
 
-    <!-- Footer Information -->
+    <!-- 頁尾宣告 -->
     <footer class="w-full max-w-md py-3 text-center text-[10px] text-slate-600 border-t border-slate-800/60">
-        Color Hunter Travel Challenge &copy; 2026 ‧ Create & Explore
+        Color Hunter 旅遊色彩獵人 &copy; 邊走邊玩‧專屬旅行拼貼
     </footer>
 
-    <!-- Camera Stream Viewfinder Modal -->
+    <!-- 相機即時取景彈窗 Modal -->
     <div id="cameraModal" class="fixed inset-0 bg-black/95 z-50 hidden flex-col justify-between items-center p-4">
         <div class="w-full max-w-md flex justify-between items-center py-2 z-10">
             <span class="text-xs font-bold text-white flex items-center gap-2">
-                <i class="fa-solid fa-circle text-rose-500 text-[9px] animate-ping"></i> CAMERA LIVE
+                <i class="fa-solid fa-circle text-rose-500 text-[9px] animate-ping"></i> 相機取景中
             </span>
             <button id="closeCamBtn" class="text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
-        <!-- Square Crop Camera Viewport -->
+        <!-- 正方形對焦框 -->
         <div class="relative w-full max-w-md aspect-square bg-slate-900 rounded-2xl overflow-hidden my-auto flex items-center justify-center border border-slate-800 shadow-2xl">
             <video id="webcam" autoplay playsinline class="w-full h-full object-cover"></video>
             
-            <!-- Viewfinder Guide Overlay -->
+            <!-- 對焦輔助線 -->
             <div class="absolute inset-0 border-2 border-white/20 pointer-events-none flex items-center justify-center">
                 <div class="w-48 h-48 border border-white/40 rounded-xl relative">
                     <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-rose-500"></div>
@@ -236,7 +235,7 @@
             </div>
         </div>
 
-        <!-- Camera Controls -->
+        <!-- 相機按鈕控制區 -->
         <div class="w-full max-w-md flex justify-center items-center gap-8 py-4 z-10">
             <button id="switchCamBtn" class="w-12 h-12 bg-slate-800 hover:bg-slate-700 text-white rounded-full flex items-center justify-center transition active:scale-90 shadow-md">
                 <i class="fa-solid fa-rotate"></i>
@@ -244,63 +243,63 @@
             <button id="shutterBtn" class="w-20 h-20 bg-white hover:bg-slate-100 rounded-full border-4 border-rose-500 flex items-center justify-center shadow-xl active:scale-90 transition">
                 <div class="w-16 h-16 rounded-full bg-rose-500"></div>
             </button>
-            <div class="w-12"></div> <!-- Spacer for symmetry -->
+            <div class="w-12"></div> <!-- 對稱占位格 -->
         </div>
     </div>
 
-    <!-- High-Res Postcard Result Modal -->
+    <!-- 明信片合成結果彈窗 Modal -->
     <div id="resultModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex-col items-center justify-between p-4 overflow-y-auto">
         <div class="w-full max-w-md flex justify-between items-center py-2">
             <h3 class="text-xs font-bold text-white flex items-center gap-2">
-                <i class="fa-solid fa-circle-check text-emerald-400"></i> POSTCARD GENERATED!
+                <i class="fa-solid fa-circle-check text-emerald-400"></i> 旅行明信片合成完成！
             </h3>
             <button id="closeResultBtn" class="text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
-        <!-- Postcard Preview Image -->
+        <!-- 明信片預覽圖片 -->
         <div class="w-full max-w-md my-auto flex flex-col items-center gap-3">
             <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-700 bg-slate-900">
-                <img id="resultImage" class="w-full h-auto block" alt="Generated Postcard">
+                <img id="resultImage" class="w-full h-auto block" alt="合成明信片預覽">
             </div>
             <p class="text-slate-400 text-[11px] flex items-center gap-1.5">
-                <i class="fa-solid fa-hand-pointer text-xs"></i> Tap download below or long-press image to save.
+                <i class="fa-solid fa-hand-pointer text-xs"></i> 點擊下方下載或長按圖片直接儲存。
             </p>
         </div>
 
-        <!-- Download Controls -->
+        <!-- 下載控制區 -->
         <div class="w-full max-w-md flex gap-3 py-2">
             <button id="downloadBtn" class="flex-1 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
-                <i class="fa-solid fa-download"></i> Download Postcard Image
+                <i class="fa-solid fa-download"></i> 下載高清明信片圖檔
             </button>
         </div>
     </div>
 
-    <!-- Hidden Graphics Canvas -->
+    <!-- 隱藏式繪圖 Canvas 畫布 -->
     <canvas id="collageCanvas" class="hidden"></canvas>
 
-    <!-- App Engine Logic -->
+    <!-- 應用程式邏輯碼 -->
     <script>
-        // Color Themes Registry
+        // 預設中文色彩主題清單
         const COLOR_THEMES = [
-            { name: 'Forest Green', hex: '#2E7D32', bg: 'from-emerald-600/20 to-green-800/30', desc: 'Find trees, leaves, green postboxes, or storefront banners!' },
-            { name: 'Sunset Orange', hex: '#E65100', bg: 'from-orange-500/20 to-amber-700/30', desc: 'Capture sunset light, terracotta tiles, or street cones!' },
-            { name: 'Marine Blue', hex: '#0277BD', bg: 'from-cyan-500/20 to-blue-700/30', desc: 'Look for clear skies, ocean waves, or blue window frames!' },
-            { name: 'Soft Pink', hex: '#D81B60', bg: 'from-pink-500/20 to-rose-700/30', desc: 'Spot cherry blossoms, cafe drinks, or cute pastel signs!' },
-            { name: 'Mustard Yellow', hex: '#F57F17', bg: 'from-amber-500/20 to-yellow-700/30', desc: 'Locate bright taxis, autumn foliage, or yellow crosswalks!' },
-            { name: 'Slate Grey', hex: '#455A64', bg: 'from-slate-500/20 to-gray-700/30', desc: 'Photograph concrete architecture, stone paths, or grey cars!' },
-            { name: 'Lavender', hex: '#7B1FA2', bg: 'from-purple-500/20 to-indigo-700/30', desc: 'Spot purple flowers, neon lights, or unique souvenirs!' },
-            { name: 'Mint', hex: '#00897B', bg: 'from-teal-500/20 to-emerald-700/30', desc: 'Search for mint ice cream, painted doors, or vintage tiles!' }
+            { name: '森林綠', hex: '#2E7D32', bg: 'from-emerald-600/20 to-green-800/30', desc: '尋找樹木、葉片、綠色郵筒或路邊的復古綠招牌！' },
+            { name: '日落橘', hex: '#E65100', bg: 'from-orange-500/20 to-amber-700/30', desc: '捕捉夕陽餘暉、紅磚牆面或街角的三角交通錐！' },
+            { name: '深海藍', hex: '#0277BD', bg: 'from-cyan-500/20 to-blue-700/30', desc: '尋找晴朗天空、湛藍大海或是藍色窗框門欄！' },
+            { name: '櫻花粉', hex: '#D81B60', bg: 'from-pink-500/20 to-rose-700/30', desc: '拍攝粉紅花朵、咖啡甜點或少女感粉色餐車！' },
+            { name: '芥末黃', hex: '#F57F17', bg: 'from-amber-500/20 to-yellow-700/30', desc: '尋找計程車、銀杏黃葉或是鮮豔的行人穿越道標誌！' },
+            { name: '灰岩黑', hex: '#455A64', bg: 'from-slate-500/20 to-gray-700/30', desc: '拍攝清水模建築、石板路或是質感極簡黑車身！' },
+            { name: '薰衣草紫', hex: '#7B1FA2', bg: 'from-purple-500/20 to-indigo-700/30', desc: '尋找紫色花海、夜間霓虹燈或是特色在地紀念品！' },
+            { name: '薄荷綠', hex: '#00897B', bg: 'from-teal-500/20 to-emerald-700/30', desc: '尋找薄荷冰淇淋、復古花磚或是浪漫薄荷綠門窗！' }
         ];
 
-        // State Machine
+        // 狀態管理
         let currentTheme = null;
         let photos = [null, null, null, null];
         let mediaStream = null;
         let activeFacingMode = 'environment';
 
-        // Element Selectors
+        // DOM 元素選取
         const drawColorBtn = document.getElementById('drawColorBtn');
         const themeName = document.getElementById('themeName');
         const themeHex = document.getElementById('themeHex');
@@ -328,7 +327,7 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const locationInput = document.getElementById('locationInput');
 
-        // Init App
+        // 初始化應用
         window.addEventListener('DOMContentLoaded', () => {
             drawRandomColor();
             updatePhotoSlotsUI();
@@ -344,7 +343,7 @@
             fileInput.addEventListener('change', handleFileUpload);
 
             resetAppBtn.addEventListener('click', () => {
-                if (confirm('Reset current theme and clear photos?')) {
+                if (confirm('確定要重新抽取顏色並清空目前已拍攝的照片嗎？')) {
                     photos = [null, null, null, null];
                     drawRandomColor();
                     updatePhotoSlotsUI();
@@ -355,7 +354,7 @@
             closeResultBtn.addEventListener('click', () => resultModal.classList.add('hidden'));
             downloadBtn.addEventListener('click', downloadPostcard);
 
-            // Slot Delete Button Listener
+            // 單張照片刪除按鈕監聽
             photoSlots.forEach(slot => {
                 const delBtn = slot.querySelector('.delete-btn');
                 const idx = parseInt(slot.dataset.index);
@@ -366,7 +365,7 @@
             });
         }
 
-        // Color Drawer Logic
+        // 抽取主題色彩邏輯
         function drawRandomColor() {
             const randomIndex = Math.floor(Math.random() * COLOR_THEMES.length);
             currentTheme = COLOR_THEMES[randomIndex];
@@ -378,11 +377,11 @@
             colorCircle.innerHTML = '<i class="fa-solid fa-check text-white text-sm"></i>';
 
             themeBgGlow.className = `absolute inset-0 opacity-25 transition-all duration-500 bg-gradient-to-r ${currentTheme.bg}`;
-            themeBadge.textContent = 'DRAWN';
-            themeBadge.className = 'text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40';
+            themeBadge.textContent = '已抽籤';
+            themeBadge.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40';
         }
 
-        // Camera Management
+        // 開啟相機
         async function startCamera() {
             cameraModal.classList.remove('hidden');
             cameraModal.classList.add('flex');
@@ -403,12 +402,13 @@
 
                 webcam.srcObject = mediaStream;
             } catch (err) {
-                console.error("Camera access failed:", err);
-                alert("Camera access failed or unsupported. Please try uploading photos instead!");
+                console.error("相機開啟失敗:", err);
+                alert("無法存取相機裝置，請確認瀏覽器權限或使用相簿上傳照片！");
                 stopCamera();
             }
         }
 
+        // 關閉相機
         function stopCamera() {
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
@@ -418,17 +418,18 @@
             cameraModal.classList.remove('flex');
         }
 
+        // 切換前後鏡頭
         function switchCamera() {
             activeFacingMode = (activeFacingMode === 'environment') ? 'user' : 'environment';
             startCamera();
         }
 
+        // 從相機拍攝並自動進行正方形裁切
         function capturePhotoFromCamera() {
             const canvas = document.createElement('canvas');
             const videoWidth = webcam.videoWidth;
             const videoHeight = webcam.videoHeight;
 
-            // Square center cropping
             const size = Math.min(videoWidth, videoHeight);
             const startX = (videoWidth - size) / 2;
             const startY = (videoHeight - size) / 2;
@@ -444,7 +445,7 @@
             stopCamera();
         }
 
-        // Image File Processing
+        // 處理圖檔上傳
         function handleFileUpload(e) {
             const files = Array.from(e.target.files);
             if (!files.length) return;
@@ -474,21 +475,24 @@
             fileInput.value = '';
         }
 
+        // 新增照片至未滿的格子
         function addPhotoToNextSlot(dataUrl) {
             const emptyIndex = photos.findIndex(p => p === null);
             if (emptyIndex !== -1) {
                 photos[emptyIndex] = dataUrl;
                 updatePhotoSlotsUI();
             } else {
-                alert("All 4 photo slots are full! Delete one to replace.");
+                alert("已集滿 4 張照片囉！如欲更換可點擊個別照片右上角的 X 刪除。");
             }
         }
 
+        // 刪除特定格子照片
         function deletePhoto(index) {
             photos[index] = null;
             updatePhotoSlotsUI();
         }
 
+        // 更新 2x2 格線預覽介面
         function updatePhotoSlotsUI() {
             let filledCount = 0;
 
@@ -524,15 +528,15 @@
             if (filledCount === 4) {
                 generateBtn.disabled = false;
                 generateBtn.className = "w-full py-3.5 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider mt-1 cursor-pointer animate-pulse";
-                generateBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generate 2x2 Postcard Card';
+                generateBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> 立即合成 2x2 拍立得明信片';
             } else {
                 generateBtn.disabled = true;
                 generateBtn.className = "w-full py-3.5 bg-slate-800 text-slate-500 font-bold rounded-xl shadow-lg cursor-not-allowed transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider mt-1";
-                generateBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Collect 4 Photos To Generate';
+                generateBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> 集滿 4 張照片後即可合成';
             }
         }
 
-        // Canvas Polaroid Postcard Engine (1200 x 1500 px)
+        // Canvas 畫布明信片合成引擎 (高解析度 1200 x 1500 px)
         function generatePostcard() {
             if (photos.filter(p => p !== null).length < 4) return;
 
@@ -542,41 +546,40 @@
             canvas.width = 1200;
             canvas.height = 1500;
 
-            // Background Fill
+            // 底色與外框邊界
             ctx.fillStyle = '#FAFAFA';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Outer Frame
             ctx.strokeStyle = '#E2E8F0';
             ctx.lineWidth = 16;
             ctx.strokeRect(8, 8, canvas.width - 16, canvas.height - 16);
 
             const targetHex = currentTheme ? currentTheme.hex : '#D81B60';
-            const targetName = currentTheme ? currentTheme.name : 'Theme Color';
+            const targetName = currentTheme ? currentTheme.name : '主題色彩';
 
-            // Top Color Spec Bar
+            // 頂部主題標示
             ctx.fillStyle = targetHex;
             ctx.fillRect(60, 60, 16, 44);
 
             ctx.fillStyle = '#0F172A';
-            ctx.font = '900 38px "Inter", sans-serif';
+            ctx.font = '900 38px "Noto Sans TC", sans-serif';
             ctx.fillText('COLOR HUNTER', 92, 96);
 
             ctx.fillStyle = '#64748B';
-            ctx.font = '600 22px "Inter", sans-serif';
-            ctx.fillText('TRAVEL CHALLENGE', 92, 126);
+            ctx.font = '700 22px "Noto Sans TC", sans-serif';
+            ctx.fillText('旅遊色彩獵人 ‧ 拼貼挑戰', 92, 126);
 
-            // Color Theme Badge
+            // 色彩標籤徽章
             ctx.fillStyle = targetHex;
-            roundRect(ctx, 840, 64, 300, 56, 28, true, false);
+            roundRect(ctx, 820, 64, 320, 56, 28, true, false);
 
             ctx.fillStyle = '#FFFFFF';
-            ctx.font = '700 20px "Inter", sans-serif';
+            ctx.font = '700 20px "Noto Sans TC", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(`COLOR: ${targetName.toUpperCase()}`, 990, 100);
+            ctx.fillText(`指定色彩：${targetName}`, 980, 100);
             ctx.textAlign = 'left';
 
-            // Grid Positions Setup
+            // 四格位置計算
             const photoSize = 510;
             const gap = 30;
             const startX = 60;
@@ -623,10 +626,11 @@
             });
         }
 
+        // 繪製明信片底部文字與邊框
         function drawPostcardFooter(ctx, hexCode) {
             const footerY = 1260;
 
-            // Divider Line
+            // 分割線
             ctx.strokeStyle = '#E2E8F0';
             ctx.lineWidth = 2;
             ctx.beginPath();
@@ -634,20 +638,20 @@
             ctx.lineTo(1140, footerY);
             ctx.stroke();
 
-            // Location Text
-            const userLocation = locationInput.value.trim() || 'Kyoto, Japan';
+            // 地點名稱
+            const userLocation = locationInput.value.trim() || '京都・清水寺';
             ctx.fillStyle = '#0F172A';
-            ctx.font = '800 36px "Inter", "Noto Sans TC", sans-serif';
+            ctx.font = '800 36px "Noto Sans TC", sans-serif';
             ctx.fillText(userLocation, 60, footerY + 60);
 
-            // Date Timestamp
+            // 當前日期時間戳記
             const now = new Date();
             const dateStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
             ctx.fillStyle = '#64748B';
-            ctx.font = '600 24px "Inter", sans-serif';
+            ctx.font = '600 24px "Noto Sans TC", sans-serif';
             ctx.fillText(dateStr, 60, footerY + 105);
 
-            // Palette Spec & Watermark
+            // 色票標記與浮水印
             ctx.fillStyle = hexCode;
             ctx.beginPath();
             ctx.arc(1080, footerY + 65, 20, 0, Math.PI * 2);
@@ -661,7 +665,7 @@
             ctx.textAlign = 'left';
         }
 
-        // Rounded Rect Helper
+        // 繪製圓角矩形輔助涵式
         function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
             ctx.beginPath();
             ctx.moveTo(x + radius, y);
@@ -678,12 +682,12 @@
             if (stroke) ctx.stroke();
         }
 
-        // Download High-Res Image
+        // 下載明信片圖片
         function downloadPostcard() {
             const canvas = document.getElementById('collageCanvas');
             const link = document.createElement('a');
             const loc = locationInput.value.trim().replace(/\s+/g, '_') || 'Travel';
-            link.download = `ColorHunter_${loc}_${Date.now()}.jpg`;
+            link.download = `色彩獵人_${loc}_${Date.now()}.jpg`;
             link.href = canvas.toDataURL('image/jpeg', 0.95);
             link.click();
         }
